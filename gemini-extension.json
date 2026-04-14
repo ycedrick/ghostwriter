@@ -1,0 +1,6 @@
+{
+  "name": "ghostwriter",
+  "version": "1.0.0",
+  "description": "Code reducer for minimizing token usage by removing unrelated function bodies.",
+  "contextFileName": "GEMINI.md"
+}
