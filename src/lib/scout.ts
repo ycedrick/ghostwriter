@@ -13,8 +13,8 @@ export class Scout {
   static async scout(input?: string): Promise<TraceTarget | null> {
     const text = input || await clipboardy.read();
     
-    // Pattern 1: /path/to/file.ts:123:456
-    const pattern1 = /([a-zA-Z0-9._\-/]+\.[a-zA-Z0-9]+):(\d+)(?::\d+)?/;
+    // Matches Unix and Windows file paths in stack traces, with an optional column number.
+    const pattern1 = /((?:[a-zA-Z]:)?[^\s():]+\.[a-zA-Z0-9]+):(\d+)(?::\d+)?/;
     const match1 = text.match(pattern1);
     
     if (match1 && match1[1] && match1[2]) {
