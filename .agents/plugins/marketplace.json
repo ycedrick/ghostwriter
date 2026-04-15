@@ -1,0 +1,20 @@
+{
+  "name": "ghostwriter-local",
+  "interface": {
+    "displayName": "GhostWriter Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "ghostwriter",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ghostwriter"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

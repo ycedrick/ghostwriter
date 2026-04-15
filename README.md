@@ -1,6 +1,6 @@
 # GhostWriter
 
-GhostWriter is an extension for the Gemini CLI that streamlines error resolution by isolating buggy code from unrelated boilerplate. It reduces API costs and improves AI debugging accuracy by ensuring the AI remains focused only on the logic relevant to the failure, even in files that exceed standard token limits.
+GhostWriter is an AST-based code reduction tool for AI coding agents. It streamlines error resolution by isolating buggy code from unrelated boilerplate, reducing context size while keeping the logic relevant to the failure. GhostWriter can be used from Gemini CLI and Codex workflows.
 
 ## Capabilities
 
@@ -8,15 +8,19 @@ GhostWriter is an extension for the Gemini CLI that streamlines error resolution
 2.  **Zero-File Debugging:** Resolves errors directly in existing source files without generating temporary reproduction scripts or debug files.
 3.  **Automated Error Location:** Automatically identifies the target file and line number from terminal stack traces or the system clipboard.
 
-## Gemini CLI Integration
+## Agent Integrations
 
-GhostWriter is designed to be used seamlessly within the Gemini CLI. Once installed as an extension, the AI agent will automatically utilize GhostWriter to read large files or analyze specific bugs.
+GhostWriter is designed to be used seamlessly within terminal-based coding agents:
+
+- **Gemini CLI:** Install it as an extension so Gemini can use the tool automatically during debugging and large-file analysis.
+- **Codex:** Use the included Codex plugin/skill so Codex can call `ghostwriter prune <file> --line <number> --stdout --silent` before analyzing or editing large files.
 
 ## Install
 
-| Agent          | Install                                                             |
-| :------------- | :------------------------------------------------------------------ |
-| **Gemini CLI** | `gemini extensions install https://github.com/ycedrick/ghostwriter` |
+| Agent          | Install                                                                                          |
+| :------------- | :----------------------------------------------------------------------------------------------- |
+| **Gemini CLI** | `gemini extensions install https://github.com/ycedrick/ghostwriter`                              |
+| **Codex**      | Use the repo-local plugin in `plugins/ghostwriter/` or the shared skill in `skills/ghostwriter/` |
 
 Install once. Use in every session for that install target after that.
 
@@ -78,21 +82,23 @@ export class DataProcessor {
 
 ## Usage
 
-GhostWriter is automatically activated by the Gemini CLI agent when it detects tasks involving large source files or terminal error traces. You do not need to explicitly mention "GhostWriter" in your prompts.
+GhostWriter is automatically useful whenever an agent needs high-signal context from a large file. Gemini CLI can use it through the extension metadata in this repo, and Codex can use it through the included Codex plugin/skill.
 
 ### Automatic Trigger Examples
 
 - **Debugging from Stack Traces:**
+
   > "Find and fix the error from my last terminal crash in `src/service.ts`."
-  *(The agent will automatically use GhostWriter to identify the line from your clipboard and prune the file.)*
+  > _(The agent can use GhostWriter to identify the line from your clipboard and prune the file.)_
 
 - **Large File Analysis:**
+
   > "Analyze `src/large-module.js` and explain the validation logic."
-  *(The agent will utilize GhostWriter to minimize token usage before reading the file.)*
+  > _(The agent can utilize GhostWriter to minimize token usage before reading the file.)_
 
 - **Pinpoint Code Fixes:**
   > "Fix the logic error at line 42 of `src/api.ts`."
-  *(The agent will prune the file around line 42 to ensure a high-signal context for the fix.)*
+  > _(The agent can prune the file around line 42 to ensure a high-signal context for the fix.)_
 
 ## Benchmarks
 

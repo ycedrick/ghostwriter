@@ -1,0 +1,31 @@
+{
+  "name": "ghostwriter",
+  "version": "1.0.0",
+  "description": "AST-based code reducer for minimizing context size during debugging.",
+  "author": {
+    "name": "Cedrick M. Caceres",
+    "url": "https://github.com/ycedrick"
+  },
+  "homepage": "https://github.com/ycedrick/ghostwriter",
+  "repository": "https://github.com/ycedrick/ghostwriter",
+  "license": "MIT",
+  "keywords": ["codex", "cli", "debugging", "ast", "typescript"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GhostWriter",
+    "shortDescription": "Reduce large files into high-signal debugging context.",
+    "longDescription": "GhostWriter helps Codex focus on the relevant logic in large files by replacing unrelated bodies with placeholders before analysis.",
+    "developerName": "Cedrick M. Caceres",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/ycedrick/ghostwriter",
+    "privacyPolicyURL": "https://github.com/ycedrick/ghostwriter",
+    "termsOfServiceURL": "https://github.com/ycedrick/ghostwriter",
+    "defaultPrompt": [
+      "Use GhostWriter on a large file before debugging it.",
+      "Prune this source file around the failing line.",
+      "Reduce this module to just the logic near the bug."
+    ],
+    "brandColor": "#2563EB"
+  }
+}
