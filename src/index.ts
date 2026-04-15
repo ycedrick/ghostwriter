@@ -32,9 +32,17 @@ program
       const originalSource = fs.readFileSync(filePath, 'utf8');
       const originalLength = originalSource.length;
 
-      let line = options.line ? parseInt(options.line, 10) : undefined;
-      
-      if (!line && !options.stdout) {
+      let line: number | undefined;
+
+      if (options.line !== undefined) {
+        const parsedLine = Number.parseInt(options.line, 10);
+        if (!Number.isInteger(parsedLine) || parsedLine < 1) {
+          throw new Error(`Invalid line number "${options.line}". Provide a positive integer.`);
+        }
+        line = parsedLine;
+      }
+
+      if (line === undefined && !options.stdout) {
         if (!options.silent) console.log(chalk.gray('Parsing clipboard for error trace...'));
         const target = await Scout.scout();
         if (target && path.resolve(process.cwd(), target.file) === filePath) {
@@ -43,8 +51,14 @@ program
         }
       }
 
+      if (line === undefined) {
+        throw new Error(
+          'Unable to determine target line. Provide `--line <number>` or copy a matching stack trace to the clipboard.',
+        );
+      }
+
       const ghoster = new Ghoster();
-      const output = await ghoster.ghost(filePath, line || 1);
+      const output = await ghoster.ghost(filePath, line);
       const prunedLength = output.length;
       
       if (options.stdout) {
