@@ -40,6 +40,7 @@ export class Ghoster {
     
     const sourceCode = fs.readFileSync(filePath, 'utf8');
     const tree = this.parser!.parse(sourceCode);
+    const newline = sourceCode.includes('\r\n') ? '\r\n' : '\n';
     
     let output = sourceCode;
 
@@ -80,10 +81,34 @@ export class Ghoster {
       if (bodyNode) {
         const before = output.substring(0, bodyNode.startIndex + 1);
         const after = output.substring(bodyNode.endIndex - 1);
-        output = before + '\n    // [Ghosted]\n  ' + after;
+        const innerIndent = this.getBodyIndent(sourceCode, bodyNode) ?? this.getClosingIndent(sourceCode, bodyNode);
+        const closingIndent = this.getClosingIndent(sourceCode, bodyNode);
+        output = before + `${newline}${innerIndent}// [Ghosted]${newline}${closingIndent}` + after;
       }
     }
 
     return output;
+  }
+
+  private getBodyIndent(sourceCode: string, bodyNode: any): string | null {
+    const bodyContent = sourceCode.slice(bodyNode.startIndex + 1, bodyNode.endIndex - 1);
+    const lines = bodyContent.split(/\r?\n/);
+
+    for (const line of lines) {
+      if (line.trim().length > 0) {
+        const indentMatch = line.match(/^[\t ]*/);
+        return indentMatch?.[0] ?? '';
+      }
+    }
+
+    return null;
+  }
+
+  private getClosingIndent(sourceCode: string, bodyNode: any): string {
+    const closingBraceIndex = bodyNode.endIndex - 1;
+    const lineStart = sourceCode.lastIndexOf('\n', closingBraceIndex);
+    const line = sourceCode.slice(lineStart + 1, closingBraceIndex);
+    const indentMatch = line.match(/^[\t ]*/);
+    return indentMatch?.[0] ?? '';
   }
 }
