@@ -47,14 +47,7 @@ export class Ghoster {
     const ghostableNodes: any[] = [];
     
     const findGhostable = (node: any) => {
-      const types = [
-        'function_declaration',
-        'method_definition',
-        'arrow_function',
-        'function_expression',
-        'class_declaration',
-      ];
-      if (types.includes(node.type)) {
+      if (this.isGhostableType(node.type)) {
         ghostableNodes.push(node);
       }
       for (let i = 0; i < node.childCount; i++) {
@@ -74,6 +67,10 @@ export class Ghoster {
         continue;
       }
 
+      if (this.hasGhostableAncestorOutsideTarget(node, targetLine)) {
+        continue;
+      }
+
       const bodyNode = node.children.find(
         (c: any) => c.type === 'statement_block' || c.type === 'class_body',
       );
@@ -88,6 +85,33 @@ export class Ghoster {
     }
 
     return output;
+  }
+
+  private hasGhostableAncestorOutsideTarget(node: any, targetLine: number): boolean {
+    let current = node.parent;
+
+    while (current) {
+      if (this.isGhostableType(current.type)) {
+        const startLine = current.startPosition.row + 1;
+        const endLine = current.endPosition.row + 1;
+        if (targetLine < startLine || targetLine > endLine) {
+          return true;
+        }
+      }
+      current = current.parent;
+    }
+
+    return false;
+  }
+
+  private isGhostableType(type: string): boolean {
+    return [
+      'function_declaration',
+      'method_definition',
+      'arrow_function',
+      'function_expression',
+      'class_declaration',
+    ].includes(type);
   }
 
   private getBodyIndent(sourceCode: string, bodyNode: any): string | null {
